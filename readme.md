@@ -8,6 +8,7 @@ Add to cron (this will just delete images older than 10mins)
 */5 * * * * find /path/to/TVChartInfo/charts/ -mindepth 1 -mmin +10 -delete
 ```
 
+### Usage example #1 as a stand alone app
 ```
 # Execute a test against a specific url 
 python main.py https://www.tradingview.com/x/PvZgagfp/
@@ -39,8 +40,10 @@ python main.py https://www.tradingview.com/x/PvZgagfp/
 	'url': 'https://www.tradingview.com/x/PvZgagfp/',
 	'url_fname': 'PvZgagfp'
  }
-
-
+```  
+  
+### Usage example #2 as a micro service   
+```
 # Run the script as a zmq listening process
 python main.py 
 
