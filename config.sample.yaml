@@ -1,0 +1,14 @@
+
+# ZMQ
+ZMQ_PUBLISH_TO_PORT: 5557
+ZMQ_RECEIVE_FROM_TO_PORT: 5558
+
+MAX_NUMBER_OF_THREADS: 2 
+
+# Saved thumbnail sizes
+# Usefull keeping quite a good size
+THUMB_SMALL_WIDTH: 1200
+THUMB_SMALL_HEIGHT: 650
+
+# The width to scale the cropped region to 
+PYTESSERACT_IMG_WIDTH: 500 
