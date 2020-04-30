@@ -68,7 +68,6 @@ def parse_tv_url(url):
 	pil_image.save( response['input_tv_chart_fpath'] )
 
 
-
 	# Save a thumbnail of it 
 	response['thumb_small_fname'] = "{}_thumb_small".format( response['url_fname'] )
 	response['thumb_small_ext']   = "png"
@@ -80,43 +79,41 @@ def parse_tv_url(url):
 	small_thumb.save( response['thumb_small_fpath'] )
 
 
-
 	# Crop bit cointaining text
 	response['crop_fname'] = "{}_crop".format( response['thumb_small_fname'] )
 	response['crop_ext']   = "png"
 	response['crop_fpath'] = "{}/charts/{}.{}".format( PATH, response['crop_fname'], response['crop_ext'] )
 
-	image = np.array(pil_image) 
-	local_img = imutils.resize(image, width=1500)
-	cv2.imwrite(
-			"{}/charts/{}_local_.{}".format( PATH, response['crop_fname'], response['crop_ext'] )
-			, local_img)
-	# Exchange:Ticker, Timeframe, Price 
-	crop_img = local_img[18:40, 0:400]
-	# All top text data
-	# crop_img = image[0:43, 0:700]
-	cv2.imwrite(response['crop_fpath'], crop_img) 
-	response['crop_height'], response['crop_width'], response['crop_channels'] = crop_img.shape
+	input_image = np.array(pil_image) 
+	attempts = [
+		{'crop_x_start': 20, 'crop_x_end': 40, 'crop_y_start': 0, 'crop_y_end': 380},
+		{'crop_x_start': 50, 'crop_x_end': 90, 'crop_y_start': 0, 'crop_y_end': 600},
+	]
+
+	for a in attempts: 
+		# Exchange:Ticker, Timeframe, Price 
+		crop_img = input_image[a['crop_x_start']:a['crop_x_end'], a['crop_y_start']:a['crop_y_end']]
+		# All top text data
+		# crop_img = image[0:43, 0:700]
+		cv2.imwrite(response['crop_fpath'], crop_img) 
+		response['crop_height'], response['crop_width'], response['crop_channels'] = crop_img.shape
+
+		# PYTessteract it 
+		# image = imutils.resize(crop_img, width=config['PYTESSERACT_IMG_WIDTH'])
+		gray = cv2.cvtColor(crop_img, cv2.COLOR_BGR2GRAY)
+		thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+		thresh = cv2.GaussianBlur(thresh, (3,3), 0)
+		data = pytesseract.image_to_string(crop_img, lang='eng',config='--psm 6')
 
 
-	# PYTessteract it 
-	image = imutils.resize(crop_img, width=config['PYTESSERACT_IMG_WIDTH'])
-	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-	thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
-	thresh = cv2.GaussianBlur(thresh, (3,3), 0)
-	cv2.imwrite(
-			"{}/charts/{}_thresh_.{}".format( PATH, response['crop_fname'], response['crop_ext'] )
-			, thresh)
-	data = pytesseract.image_to_string(crop_img, lang='eng',config='--psm 6')
-
-
-	regex_query = '([A-Z_]+)[:]([A-Z.!0-9]+), ([0-9A-Z]+) ([0-9.]+)'
-	chart_data_results = re.findall(r""+regex_query, data)
-	if len(chart_data_results) < 1:
-		error('Error: {}'.format(chart_data_results))
-		return 
-
-	response['exchange'], response['ticker'], response['timeframe'], response['price'] = chart_data_results[0]
+		regex_query = '([A-Z_]+)[:]([A-Z.!0-9]+), ([0-9A-Z]+) ([0-9.]+)'
+		chart_data_results = re.findall(r""+regex_query, data)
+		if len(chart_data_results) < 1:
+			error('Error regexing: {}'.format(data))
+		else:
+			response['exchange'], response['ticker'], response['timeframe'], response['price'] = chart_data_results[0]
+			break 
+	
 
 
 	response['timeframe_formatted'] = response['timeframe']
