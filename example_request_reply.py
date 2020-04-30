@@ -8,6 +8,7 @@ examples = [
 	{'pos': 3, 'id': time.time_ns(), 'url': 'https://www.tradingview.com/x/ljDfxMRq/' },
 	{'pos': 4, 'id': time.time_ns(), 'url': 'https://www.tradingview.com/x/syJFgexD/' },
 	{'pos': 5, 'id': time.time_ns(), 'url': 'https://www.tradingview.com/x/zTT81sRi/' },
+	{'pos': 6, 'id': time.time_ns(), 'url': 'https://www.tradingview.com/x/gef8OC9J/' },
 ]
 
 z = ZmqRelay( 'tvchartinfo' )

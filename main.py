@@ -34,8 +34,6 @@ config['THUMB_SMALL_HEIGHT']    = int(config['THUMB_SMALL_HEIGHT'])
 config['PYTESSERACT_IMG_WIDTH'] = int(config['PYTESSERACT_IMG_WIDTH'])
 
 
-def error(msg):
-	logger.error(msg)
 
 
 def parse_tv_url(url):
@@ -48,7 +46,7 @@ def parse_tv_url(url):
 	link_components = re.findall(r""+regex_query, url)
 
 	if len(link_components) < 1:
-		error('Unable to split link into components: {} -- {}'.format(url, link_components))
+		logger.error('Unable to split link into components: {} -- {}'.format(url, link_components))
 		return 
 	else:
 		response['url'] = url
@@ -87,7 +85,8 @@ def parse_tv_url(url):
 	input_image = np.array(pil_image) 
 	attempts = [
 		{'crop_x_start': 20, 'crop_x_end': 40, 'crop_y_start': 0, 'crop_y_end': 380},
-		{'crop_x_start': 50, 'crop_x_end': 90, 'crop_y_start': 0, 'crop_y_end': 600},
+		# {'crop_x_start': 40, 'crop_x_end': 80, 'crop_y_start': 0, 'crop_y_end': 600},
+		{'crop_x_start': 48, 'crop_x_end': 92, 'crop_y_start': 0, 'crop_y_end': 600},
 	]
 
 	for a in attempts: 
@@ -109,12 +108,17 @@ def parse_tv_url(url):
 		regex_query = '([A-Z_]+)[:]([A-Z.!0-9]+), ([0-9A-Z]+) ([0-9.]+)'
 		chart_data_results = re.findall(r""+regex_query, data)
 		if len(chart_data_results) < 1:
-			error('Error regexing: {}'.format(data))
+			logger.error('Error regexing: {}'.format(data))
+			response['error'] = 'Error regexing image, text: {}'.format(data)
 		else:
+			if 'error' in response:
+				del response['error']
 			response['exchange'], response['ticker'], response['timeframe'], response['price'] = chart_data_results[0]
 			break 
 	
 
+	if 'error' in response:
+		return {'error': response['error']}
 
 	response['timeframe_formatted'] = response['timeframe']
 	has_letter_in_tf = re.search('[a-zA-Z]', response['timeframe'])
