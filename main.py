@@ -88,8 +88,11 @@ def parse_tv_url(url):
 
 	image = np.array(pil_image) 
 	local_img = imutils.resize(image, width=1500)
+	cv2.imwrite(
+			"{}/charts/{}_local_.{}".format( PATH, response['crop_fname'], response['crop_ext'] )
+			, local_img)
 	# Exchange:Ticker, Timeframe, Price 
-	crop_img = image[20:40, 0:200]
+	crop_img = local_img[18:40, 0:400]
 	# All top text data
 	# crop_img = image[0:43, 0:700]
 	cv2.imwrite(response['crop_fpath'], crop_img) 
@@ -101,9 +104,13 @@ def parse_tv_url(url):
 	gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 	thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
 	thresh = cv2.GaussianBlur(thresh, (3,3), 0)
-	data = pytesseract.image_to_string(thresh, lang='eng',config='--psm 6')
+	cv2.imwrite(
+			"{}/charts/{}_thresh_.{}".format( PATH, response['crop_fname'], response['crop_ext'] )
+			, thresh)
+	data = pytesseract.image_to_string(crop_img, lang='eng',config='--psm 6')
 
-	regex_query = '([A-Z]+):([A-Z]+), ([0-9A-Z]+) ([0-9.]+)'
+
+	regex_query = '([A-Z_]+):([A-Z.!0-9]+), ([0-9A-Z]+) ([0-9.]+)'
 	chart_data_results = re.findall(r""+regex_query, data)
 	if len(chart_data_results) < 1:
 		error('Error: {}'.format(chart_data_results))
@@ -141,8 +148,15 @@ if __name__ == '__main__':
 			for task in iter(q.get, None):  # blocking get until None is received
 				try:
 					logger.info("Actioning job: {}, Thead {}".format(task, threading.current_thread().name))
+					
+					# try:
 					response = parse_tv_url(task['url'])
 					response['id'] = task['id']
+					# except:
+						# response = {}
+						# response['error'] = 'Error in parsing TV URL'
+						# logger.error(response['error'])
+
 					z.send_msg( response )
 
 				finally:

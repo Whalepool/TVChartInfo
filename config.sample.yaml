@@ -11,4 +11,5 @@ THUMB_SMALL_WIDTH: 1200
 THUMB_SMALL_HEIGHT: 650
 
 # The width to scale the cropped region to 
+# Not recommend adjusting
 PYTESSERACT_IMG_WIDTH: 500 

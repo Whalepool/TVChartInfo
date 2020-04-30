@@ -25,6 +25,9 @@ class ZmqRelay(  ):
 
         time.sleep(0.1)
 
+    def set_recv_timeout(self, miliseconds=-1):
+        self.receiver.setsockopt(zmq.RCVTIMEO, miliseconds)
+
     def mogrify(self, topic, msg):
         """ json encode the message and prepend the topic """
         return topic + ' ' + json.dumps(msg,  default=str)
