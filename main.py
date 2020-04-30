@@ -110,7 +110,7 @@ def parse_tv_url(url):
 	data = pytesseract.image_to_string(crop_img, lang='eng',config='--psm 6')
 
 
-	regex_query = '([A-Z_]+):([A-Z.!0-9]+), ([0-9A-Z]+) ([0-9.]+)'
+	regex_query = '([A-Z_]+)[:]([A-Z.!0-9]+), ([0-9A-Z]+) ([0-9.]+)'
 	chart_data_results = re.findall(r""+regex_query, data)
 	if len(chart_data_results) < 1:
 		error('Error: {}'.format(chart_data_results))
