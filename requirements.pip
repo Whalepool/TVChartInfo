@@ -1,15 +1,5 @@
 coloredlogs
-logging
 setproctitle
-os
-sys
-threading
-queue
-io
-re
-requests
-time
-json
 pyyaml
 imutils
 opencv-python
