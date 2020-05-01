@@ -5,6 +5,9 @@ Multi threaded trading view chart information extractor.
 ### Requirements
 python > 3.8  
 [Running WP Dispatchers](https://github.com/Whalepool/Dispatchers)   
+```bash
+sudo apt install tesseract-ocr libtesseract-dev
+```
 
 ##### Setup Cron 
 Add to cron (this will just delete images older than 10mins) 
