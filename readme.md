@@ -24,7 +24,7 @@ cp config.sample.yaml config.yaml
 # Make sure we have screen installed
 # sudo apt-get install screen 
 
-# cd into the Dispatchers folder
+# cd into the TVChartInfo folder
 # execute the zmqproxy.py script inside a screen and auto detach 
 screen -S tvchartinfo -d -m python main.py 
 
