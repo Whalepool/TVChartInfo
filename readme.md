@@ -15,6 +15,8 @@ Add to cron (this will just delete images older than 10mins)
 ##### Make your config file
 ```bash
 cp config.sample.yaml config.yaml
+
+# Make sure all your config details are correct
 ```
   
 ##### Usage example #2 as a micro service   
