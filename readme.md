@@ -6,13 +6,34 @@ Multi threaded trading view chart information extractor.
 python > 3.8  
 a 'zmq proxy' as cited in readme [here](https://github.com/Whalepool/Dispatchers)   
 
-### Setup
+##### Setup Cron 
 Add to cron (this will just delete images older than 10mins) 
 ```bash
 */5 * * * * find /path/to/TVChartInfo/charts/ -mindepth 1 -mmin +10 -delete
 ```
 
-### Usage example #1 as a stand alone app
+##### Make your config file
+```bash
+cp config.sample.yaml config.yaml
+```
+  
+##### Usage example #2 as a micro service   
+```bash 
+# Make sure we have screen installed
+# sudo apt-get install screen 
+
+# cd into the Dispatchers folder
+# execute the zmqproxy.py script inside a screen and auto detach 
+screen -S tvchartinfo -d -m python main.py 
+
+# You can also run them independently outputting to /dev/null or create service files for systemd etc.
+# Personally i like them in the tmux session
+
+# You can initiate a request / reply example using 
+python example_request_reply.py 
+```  
+
+##### Usage example #1 as a stand alone app
 ```bash 
 # Execute a test against a specific url 
 python main.py https://www.tradingview.com/x/PvZgagfp/
@@ -44,22 +65,6 @@ python main.py https://www.tradingview.com/x/PvZgagfp/
 	'url': 'https://www.tradingview.com/x/PvZgagfp/',
 	'url_fname': 'PvZgagfp'
  }
-```  
-  
-### Usage example #2 as a micro service   
-```bash 
-# Make sure we have screen installed
-# sudo apt-get install screen 
-
-# cd into the Dispatchers folder
-# execute the zmqproxy.py script inside a screen and auto detach 
-screen -S tvchartinfo -d -m python main.py 
-
-# You can also run them independently outputting to /dev/null or create service files for systemd etc.
-# Personally i like them in the tmux session
-
-# You can initiate a request / reply example using 
-python example_request_reply.py 
 ```  
   
 ![icon](https://i.imgur.com/rj5F5zf.png)
