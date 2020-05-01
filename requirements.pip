@@ -10,7 +10,7 @@ re
 requests
 time
 json
-yaml
+pyyaml
 imutils
 opencv-python
 pytesseract

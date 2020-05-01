@@ -8,12 +8,12 @@ a 'zmq proxy' as cited in readme [here](https://github.com/Whalepool/Dispatchers
 
 ### Setup
 Add to cron (this will just delete images older than 10mins) 
-```
+```bash
 */5 * * * * find /path/to/TVChartInfo/charts/ -mindepth 1 -mmin +10 -delete
 ```
 
 ### Usage example #1 as a stand alone app
-```
+```bash 
 # Execute a test against a specific url 
 python main.py https://www.tradingview.com/x/PvZgagfp/
 
@@ -47,7 +47,7 @@ python main.py https://www.tradingview.com/x/PvZgagfp/
 ```  
   
 ### Usage example #2 as a micro service   
-```
+```bash 
 # Run the script as a zmq listening process
 python main.py 
 
