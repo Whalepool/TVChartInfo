@@ -3,12 +3,14 @@ import time
 import zmq
 # Sample data
 examples = [
-	{'pos': 1, 'id': time.time_ns(), 'url': 'https://www.tradingview.com/x/PvZgagfp/' },
-	{'pos': 2, 'id': time.time_ns(), 'url': 'https://www.tradingview.com/x/62eFJCzI/' },
+	# {'pos': 1, 'id': time.time_ns(), 'url': 'https://www.tradingview.com/x/PvZgagfp/' },
+	# {'pos': 2, 'id': time.time_ns(), 'url': 'https://www.tradingview.com/x/62eFJCzI/' },
 	{'pos': 3, 'id': time.time_ns(), 'url': 'https://www.tradingview.com/x/ljDfxMRq/' },
 	{'pos': 4, 'id': time.time_ns(), 'url': 'https://www.tradingview.com/x/syJFgexD/' },
 	{'pos': 5, 'id': time.time_ns(), 'url': 'https://www.tradingview.com/x/zTT81sRi/' },
 	{'pos': 6, 'id': time.time_ns(), 'url': 'https://www.tradingview.com/x/gef8OC9J/' },
+	{'pos': 7, 'id': time.time_ns(), 'url': 'http://www.tradingview.com/x/SMkyNHvw' },
+	{'pos': 8, 'id': time.time_ns(), 'url': 'https://www.tradingview.com/x/SMkyNHvw' },
 ]
 
 z = ZmqRelay( 'tvchartinfo' )

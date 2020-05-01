@@ -42,12 +42,14 @@ def parse_tv_url(url):
 
 
 	# Get link components
-	regex_query = "(https:\/\/www\.tradingview\.com\/x\/([A-Za-z0-9]+)\/)"
+	regex_query = "(https?:\/\/www\.tradingview\.com\/x\/([A-Za-z0-9]+)\/?)"
 	link_components = re.findall(r""+regex_query, url)
 
+
 	if len(link_components) < 1:
-		logger.error('Unable to split link into components: {} -- {}'.format(url, link_components))
-		return 
+		error = 'Unable to split link into components: {} -- {}'.format(url, link_components)
+		logger.error(error)
+		return {'error': error }
 	else:
 		response['url'] = url
 		response['url_fname'] = link_components[0][1]
@@ -89,6 +91,32 @@ def parse_tv_url(url):
 		{'crop_x_start': 48, 'crop_x_end': 92, 'crop_y_start': 0, 'crop_y_end': 600},
 	]
 
+	def try_regex_chart_data( data ):
+		attempts = [
+			# Full stack
+			{ 
+				'regex': '([A-Z_]+)[:]([A-Z.!0-9]+), ([0-9A-Z]+) ([0-9.]+)',
+				'fields': ['exchange','ticker','timeframe','price']
+			},
+			# Micro chart (7 in examples)
+			{
+				'regex': '([A-Z_]+), ([A-Z.!0-9]+)',
+				'fields': ['ticker','timeframe']
+			}
+		]
+		for i,attempt in enumerate(attempts):
+
+			results = re.findall(r""+attempt['regex'], data)
+			if len(results) >= 1:
+				reply = {}
+				for idx, el in enumerate(results[0]):
+					reply[ attempt['fields'][idx] ] = el 
+				
+				return reply 
+
+		return {}
+
+
 	for a in attempts: 
 		# Exchange:Ticker, Timeframe, Price 
 		crop_img = input_image[a['crop_x_start']:a['crop_x_end'], a['crop_y_start']:a['crop_y_end']]
@@ -104,21 +132,16 @@ def parse_tv_url(url):
 		thresh = cv2.GaussianBlur(thresh, (3,3), 0)
 		data = pytesseract.image_to_string(crop_img, lang='eng',config='--psm 6')
 
-
-		regex_query = '([A-Z_]+)[:]([A-Z.!0-9]+), ([0-9A-Z]+) ([0-9.]+)'
-		chart_data_results = re.findall(r""+regex_query, data)
-		if len(chart_data_results) < 1:
-			logger.error('Error regexing: {}'.format(data))
-			response['error'] = 'Error regexing image, text: {}'.format(data)
-		else:
-			if 'error' in response:
-				del response['error']
-			response['exchange'], response['ticker'], response['timeframe'], response['price'] = chart_data_results[0]
+		results = try_regex_chart_data( data ) 
+		if 'ticker' in results:
+			response = { **response, **results }
 			break 
-	
 
-	if 'error' in response:
-		return {'error': response['error']}
+		
+
+	if 'ticker' not in response:
+		logger.error('Error regexing image')
+		return {'error': 'Error regexing image'}
 
 	response['timeframe_formatted'] = response['timeframe']
 	has_letter_in_tf = re.search('[a-zA-Z]', response['timeframe'])
@@ -152,6 +175,8 @@ if __name__ == '__main__':
 					
 					# try:
 					response = parse_tv_url(task['url'])
+					pprint(response)
+
 					response['id'] = task['id']
 					# except:
 						# response = {}
