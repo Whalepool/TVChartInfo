@@ -4,7 +4,7 @@ Multi threaded trading view chart information extractor.
 
 ### Requirements
 python > 3.8  
-a 'zmq proxy' as cited in readme [here](https://github.com/Whalepool/Dispatchers)   
+[Running WP Dispatchers](https://github.com/Whalepool/Dispatchers)   
 
 ##### Setup Cron 
 Add to cron (this will just delete images older than 10mins) 
