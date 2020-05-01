@@ -48,8 +48,15 @@ python main.py https://www.tradingview.com/x/PvZgagfp/
   
 ### Usage example #2 as a micro service   
 ```bash 
-# Run the script as a zmq listening process
-python main.py 
+# Make sure we have screen installed
+# sudo apt-get install screen 
+
+# cd into the Dispatchers folder
+# execute the zmqproxy.py script inside a screen and auto detach 
+screen -S tvchartinfo -d -m python main.py 
+
+# You can also run them independently outputting to /dev/null or create service files for systemd etc.
+# Personally i like them in the tmux session
 
 # You can initiate a request / reply example using 
 python example_request_reply.py 
